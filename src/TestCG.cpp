@@ -34,7 +34,7 @@ using std::endl;
 
 #include "TestCG.hpp"
 #include "CG.hpp"
-
+#include "OptimizeProblem.hpp"
 /*!
   Test the correctness of the Preconditined CG implementation by using a system matrix with a dominant diagonal.
 
@@ -77,7 +77,10 @@ int TestCG(SparseMatrix & A, CGData & data, Vector & b, Vector & x, TestCGData &
     }
   }
   ReplaceMatrixDiagonal(A, exaggeratedDiagA);
-
+  //同步修改data1
+   albusdata* data1=(albusdata*)A.optimizationData;
+   subopt( A, data1);
+  //
   int niters = 0;
   double normr = 0.0;
   double normr0 = 0.0;
@@ -112,6 +115,9 @@ int TestCG(SparseMatrix & A, CGData & data, Vector & b, Vector & x, TestCGData &
 
   // Restore matrix diagonal and RHS
   ReplaceMatrixDiagonal(A, origDiagA);
+  //
+   subopt( A, data1);
+  //
   CopyVector(origB, b);
   // Delete vectors
   DeleteVector(origDiagA);

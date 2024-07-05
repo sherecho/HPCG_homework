@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source env.sh
+#source env.sh
 
-ln -sf setup/Make.MY_MPI make.inc
+#ln -sf setup/Make.MY_MPI make.inc
 make -j4

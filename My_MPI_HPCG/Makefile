@@ -32,6 +32,7 @@ HPCG_DEPS = src/CG.o \
 	    src/ComputeOptimalShapeXYZ.o \
 	    src/ComputeSPMV.o \
 	    src/ComputeSPMV_ref.o \
+		src/ComputeSPMV_my.o \
 	    src/ComputeSYMGS.o \
 	    src/ComputeSYMGS_ref.o \
 	    src/ComputeWAXPBY.o \
@@ -145,6 +146,8 @@ src/ComputeSPMV.o: /public1/home/sc81071/CAS_PP2024/wangzhe/hpcg-master/src/Comp
 	$(CXX) -c $(CXXFLAGS) -I/public1/home/sc81071/CAS_PP2024/wangzhe/hpcg-master/src $< -o $@
 
 src/ComputeSPMV_ref.o: /public1/home/sc81071/CAS_PP2024/wangzhe/hpcg-master/src/ComputeSPMV_ref.cpp /public1/home/sc81071/CAS_PP2024/wangzhe/hpcg-master/src/ComputeSPMV_ref.hpp $(PRIMARY_HEADERS)
+	$(CXX) -c $(CXXFLAGS) -I/public1/home/sc81071/CAS_PP2024/wangzhe/hpcg-master/src $< -o $@
+src/ComputeSPMV_my.o: /public1/home/sc81071/CAS_PP2024/wangzhe/hpcg-master/src/ComputeSPMV_my.cpp /public1/home/sc81071/CAS_PP2024/wangzhe/hpcg-master/src/ComputeSPMV_my.hpp $(PRIMARY_HEADERS)
 	$(CXX) -c $(CXXFLAGS) -I/public1/home/sc81071/CAS_PP2024/wangzhe/hpcg-master/src $< -o $@
 
 src/ComputeSYMGS.o: /public1/home/sc81071/CAS_PP2024/wangzhe/hpcg-master/src/ComputeSYMGS.cpp /public1/home/sc81071/CAS_PP2024/wangzhe/hpcg-master/src/ComputeSYMGS.hpp $(PRIMARY_HEADERS)

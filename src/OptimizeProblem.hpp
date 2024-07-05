@@ -18,7 +18,8 @@
 #include "SparseMatrix.hpp"
 #include "Vector.hpp"
 #include "CGData.hpp"
-
+#include "SPMVCSR.hpp"
+#include "hpcg.hpp"
 int OptimizeProblem(SparseMatrix & A, CGData & data,  Vector & b, Vector & x, Vector & xexact);
 
 // This helper function should be implemented in a non-trivial way if OptimizeProblem is non-trivial
@@ -26,5 +27,5 @@ int OptimizeProblem(SparseMatrix & A, CGData & data,  Vector & b, Vector & x, Ve
 // This value will be used to report Gbytes used in ReportResults (the value returned will be divided by 1000000000.0).
 
 double OptimizeProblemMemoryUse(const SparseMatrix & A);
-
+void subopt(const SparseMatrix & A,albusdata *data1);
 #endif  // OPTIMIZEPROBLEM_HPP

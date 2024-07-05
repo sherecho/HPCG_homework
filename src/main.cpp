@@ -249,7 +249,7 @@ int main(int argc, char * argv[]) {
   TestCGData testcg_data;
   testcg_data.count_pass = testcg_data.count_fail = 0;
   TestCG(A, data, b, x, testcg_data);
-
+  
   TestSymmetryData testsymmetry_data;
   TestSymmetry(A, b, xexact, testsymmetry_data);
 

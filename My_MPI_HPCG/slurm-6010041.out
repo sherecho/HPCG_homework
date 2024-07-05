@@ -1,0 +1,2 @@
+/var/spool/slurm/d/job6010041/slurm_script: line 9: syntax error near unexpected token `export'
+/var/spool/slurm/d/job6010041/slurm_script: line 9: `export OMP_NUM_THREADS=$NUM_THREADS'

@@ -34,10 +34,88 @@
   @see GenerateGeometry
   @see GenerateProblem
 */
+local_int_t binary_search(
+  local_int_t * row_ptr,                      
+  local_int_t num, 
+  local_int_t end) 
+{
+  local_int_t l, r, h, t = 0;
+  l = 0, r = end;
+  while (l <= r) {
+    h = (l + r) >> 1;
+    if (row_ptr[h] >= num) {
+      r = h - 1;
+    } else {
+      l = h + 1;
+      t = h;
+    }
+  }
+  return t;
+}
+ void albus_balance(local_int_t rows, 
+                   local_int_t nonzeronums,
+                   local_int_t * row_ptr, 
+                   local_int_t* start,
+                   local_int_t* end,
+                   local_int_t* start1,
+                   local_int_t* end1, double * mid_ans,
+                   std::size_t thread_nums) {
+  std::size_t tmp;
+  start[0] = 0;
+  start1[0] = 0;
+  end[thread_nums - 1] = rows;
+  end1[thread_nums - 1] = 0;
+  std::size_t tt = nonzeronums / thread_nums;
+  
+  for (std::size_t i = 1; i < thread_nums; i++) {
+    tmp = tt * i;
+    start[i] = binary_search(row_ptr, tmp, rows);
+    start1[i] = tmp - row_ptr[start[i]];
+    end[i - 1] = start[i];
+    end1[i - 1] = start1[i];
+  } 
+}
+
+void subopt(const SparseMatrix & A, albusdata* data1){
+
+   data1->row_ptr[0]=0;
+   int cur_nnz=0;
+   for (local_int_t i=0; i< A.localNumberOfRows; i++)  {
+    cur_nnz+=A.nonzerosInRow[i];
+    data1->row_ptr[i+1]=cur_nnz;
+   }
+   int m=0;
+   for(int i=0;i<A.localNumberOfRows;i++){
+       const double * const cur_vals = A.matrixValues[i];
+       const local_int_t * const cur_inds = A.mtxIndL[i];
+       const int cur_nnz = A.nonzerosInRow[i];
+      for(int j=0;j<cur_nnz;j++){
+        data1->value[m]=cur_vals[j];
+        data1->col_index[m]=cur_inds[j];
+        m++;
+      }
+   }
+   albus_balance(A.localNumberOfRows, A.localNumberOfNonzeros, data1->row_ptr, data1->start,data1->end,data1->start1,data1->end1,data1->result_mid,data1->thread_nums);
+}
 int OptimizeProblem(SparseMatrix & A, CGData & data, Vector & b, Vector & x, Vector & xexact) {
 
   // This function can be used to completely transform any part of the data structures.
   // Right now it does nothing, so compiling with a check for unused variables results in complaints
+   
+   //SPMVCSR * tmppointer=new SPMVCSR(A);  
+    albusdata* data1=new albusdata;
+    data1->row_ptr=new local_int_t[A.localNumberOfRows+1];
+    data1->col_index=new local_int_t[A.localNumberOfNonzeros];
+    data1->value=new alignas(64) double[A.localNumberOfNonzeros];
+    data1->thread_nums= 12;//std::thread::hardware_concurrency();
+    data1->start=new local_int_t[data1->thread_nums];
+    data1->end=new local_int_t[data1->thread_nums];
+    data1->start1=new local_int_t[data1->thread_nums];
+    data1->end1=new local_int_t[data1->thread_nums];
+    data1->result_mid=new alignas(64) double[data1->thread_nums*2];
+    memset(data1->result_mid, 0.0, data1->thread_nums*2* sizeof(double));
+    subopt( A,data1);
+    A.optimizationData=(void* )data1;
 
 #if defined(HPCG_USE_MULTICOLORING)
   const local_int_t nrow = A.localNumberOfRows;
